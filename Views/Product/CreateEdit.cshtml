@@ -30,7 +30,9 @@
 
     <p>
         <label asp-for="Product.Description"></label>
-        <input asp-for="Product.Description" class="form-control" />
+        <!--<input asp-for="Product.Description" class="form-control" />-->
+        <textarea asp-for="Product.Description" class="form-control summernote"></textarea>
+        <span asp-validation-for="Product.Description" class="text-danger"></span>
     </p>
 
     <p>
@@ -70,13 +72,22 @@
     }
 
     <script>
+        $(document).ready(function () {
+            $('.summernote').summernote(
+            {
+                height: 200
+            });
+        });
+    </script>
+
+    <script>
         function input() {
             if (document.getElementById("uploadedImage").value == "")
             {
                 Swal.fire(
                     'Error',
                     'You should upload an image',
-                    'success'
+                    'error'
                 )
             }
         }

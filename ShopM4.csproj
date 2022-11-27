@@ -18,6 +18,7 @@
     <Folder Include="Views\Category\" />
     <Folder Include="Views\MyModel\" />
     <Folder Include="Views\Product\" />
+    <Folder Include="wwwroot\Images\Product\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
