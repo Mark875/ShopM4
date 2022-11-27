@@ -1,0 +1,84 @@
+﻿@model ShopM4.Models.ViewModels.ProductViewModel
+
+@{
+    var title = "Create Product";
+}
+
+@if (Model.Product.Id != 0)
+{
+    title = "Edit Product";
+}
+
+<h1>@title</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+    <!-- Передача скрытых данных -->
+    <input asp-for="Product.Id" hidden />
+
+    <p>
+        <label asp-for="Product.Name"></label>
+        <input asp-for="Product.Name" class="form-control" />
+        <span asp-validation-for="Product.Name" class="text-danger"></span>
+    </p>
+
+    <p>
+        <label asp-for="Product.Price"></label>
+        <input asp-for="Product.Price" class="form-control" />
+        <span asp-validation-for="Product.Price" class="text-danger"></span>
+    </p>
+
+    <p>
+        <label asp-for="Product.Description"></label>
+        <input asp-for="Product.Description" class="form-control" />
+    </p>
+
+    <p>
+        <label asp-for="Product.Image"></label>
+        <input type="file" name="files" id="uploadedImage" class="form-control" multiple />
+    </p>
+    <p>
+        <label asp-for="Product.CategoryId"></label>
+        <!--<select asp-for="CategoryId" asp-items="@ViewBag.CategoriesList" class="form-control">-->
+        <select asp-for="Product.CategoryId" asp-items="@Model.CategoriesList" class="form-control">
+            <option disabled selected>-- Choose category --</option>
+        </select>
+        <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+    </p>
+
+    <p>
+        @if (Model.Product.Id != 0)
+        {
+            <input type="submit" onclick="input()" class="btn btn-success" value="Update" />
+        }
+        else
+        {
+            <input type="submit" onclick="input()" class="btn btn-success" value="Create" />
+        }
+
+        <a class="btn btn-primary" asp-controller="Category" asp-action="Index"> Back </a>
+    </p>
+
+    <p>
+        <div asp-validation-summary="All"></div>
+    </p>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        function input() {
+            if (document.getElementById("uploadedImage").value == "")
+            {
+                Swal.fire(
+                    'Error',
+                    'You should upload an image',
+                    'success'
+                )
+            }
+        }
+    </script>
+}
