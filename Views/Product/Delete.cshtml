@@ -1,0 +1,62 @@
+﻿@model ShopM4.Models.Product
+
+@{
+    var title = "Delete Product";
+}
+
+<h1>@title</h1>
+
+<form method="post" asp-action="DeletePost">
+
+    <!-- Передача скрытых данных -->
+    <input asp-for="Id" hidden />
+
+    <p>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" disabled />
+    </p>
+
+    <p>
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" disabled />
+    </p>
+
+    <p>
+        <label asp-for="Description"></label>
+        <!--<input asp-for="Description" class="form-control" />-->
+        <textarea asp-for="Description" class="form-control summernote" disabled></textarea>
+    </p>
+
+    <p>
+        <label asp-for="CategoryId"></label>
+        <input asp-for="Category.Name" class="form-control" disabled />
+    </p>
+
+    <p>
+
+        <input type="submit" onclick="input()" class="btn btn-danger" value="Delete" />
+
+        <a class="btn btn-primary" asp-controller="Product" asp-action="Index"> Back </a>
+    </p>
+</form>
+
+@if (Model.Id != 0)
+{
+    <p>
+        <img src="@PathManager.ImageProductPath@Model.Image" width="100" />
+    </p>
+}
+
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('.summernote').summernote(
+                {
+                    height: 200,
+                    disable: true
+                });
+        });
+    </script>
+}

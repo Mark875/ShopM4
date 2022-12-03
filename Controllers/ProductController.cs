@@ -7,6 +7,8 @@ using ShopM4.Data;
 using ShopM4.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopM4.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using AspNetCore;
 
 namespace ShopM4.Controllers
 {
@@ -72,7 +74,7 @@ namespace ShopM4.Controllers
                 {
                     return NotFound();
                 }
-                return View(productViewModel.Product);
+                return View(productViewModel);
             }
         }
 
@@ -98,16 +100,86 @@ namespace ShopM4.Controllers
                 }
 
                 productViewModel.Product.Image = imageName + extension;
-
+                productViewModel.Product.Id = 1;
                 db.Product.Add(productViewModel.Product);
             }
             else 
             {
                 // update
+                var product = db.Product.AsNoTracking().FirstOrDefault(x => x.Id == productViewModel.Product.Id);
+                if (files.Count > 0)    // new file
+                {
+                    string upload = root + PathManager.ImageProductPath;
+                    string imageName = Guid.NewGuid().ToString();
+                    string extension = Path.GetExtension(files[0].FileName);
+
+                    // delete old file
+                    var oldFile = upload + product.Image;
+                    if (System.IO.File.Exists(oldFile))
+                    {
+                        System.IO.File.Delete(oldFile);
+                    }
+
+                    using (var fileStream = new FileStream(upload + imageName + extension, FileMode.Create))
+                    {
+                        files[0].CopyTo(fileStream);
+                    }
+
+                    productViewModel.Product.Image = imageName + extension;
+                }
+                else
+                {
+                    productViewModel.Product.Image = product.Image;
+                }
+
+                db.Product.Update(productViewModel.Product);
             }
 
             db.SaveChanges();
 
+            return RedirectToAction("Index");
+        }
+
+        // GET - Delete
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                NotFound();
+            }
+
+            Product product = db.Product.Find(id);
+            
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            product.Category = db.Category.Find(product.CategoryId);
+            
+
+            return View(product);
+        }
+
+
+        // POST - Delete
+        [HttpPost]
+        public IActionResult DeletePost(int? id)
+        {
+            var files = HttpContext.Request.Form.Files;
+            string root = webHostEnvironment.WebRootPath;
+            var product = db.Product.Find(id);
+            string upload = root + PathManager.ImageProductPath;
+
+            // delete old file
+            var oldFile = upload + product.Image;
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
+            db.Product.Remove(product);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
     }

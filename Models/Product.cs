@@ -8,7 +8,7 @@ namespace ShopM4.Models
     public class Product
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
 
         [Required]
         public string Name { get; set; }
