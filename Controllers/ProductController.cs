@@ -163,24 +163,16 @@ namespace ShopM4.Controllers
         }
 
 
+
         // POST - Delete
         [HttpPost]
         public IActionResult DeletePost(int? id)
         {
-            var files = HttpContext.Request.Form.Files;
-            string root = webHostEnvironment.WebRootPath;
             var product = db.Product.Find(id);
-            string upload = root + PathManager.ImageProductPath;
 
-            // delete old file
-            var oldFile = upload + product.Image;
-            if (System.IO.File.Exists(oldFile))
-            {
-                System.IO.File.Delete(oldFile);
-            }
             db.Product.Remove(product);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return View();
         }
     }
 }
