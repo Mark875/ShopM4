@@ -6,8 +6,45 @@
 
 
 <div class="container">
-    @foreach (var prod in Model.Products)
-    {
-        <partial name="_ProductCard" model="prod"/>
-    }
+
+    <div>
+        <button class="btn filter-button" data-filter="all">All</button>
+        @foreach (var item in Model.Categories)
+        {
+            <button class="btn filter-button" data-filter="@item.Name.Replace(' ', '_')">
+                @item.Name
+            </button>
+        }
+    </div>
+
+    <div>
+        @if (Model != null && Model.Products != null)
+        {
+            @foreach (var prod in Model.Products)
+            {
+                <partial name="_ProductCard" model="prod" />
+            }
+        }
+    </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function() { 
+            $('.filter-button').click(function() {
+                var value = $(this).attr('data-filter');
+
+                if (value == "all")
+                {
+                    $('.filter').show('1000');
+                }
+                else
+                {
+                    $('.filter').not('.' + value).hide('1000');
+                    $('.filter').filter('.' + value).show('1000');
+                }
+            });
+        });
+    </script>
+}

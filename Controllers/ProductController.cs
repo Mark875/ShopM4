@@ -105,7 +105,7 @@ namespace ShopM4.Controllers
                 }
 
                 productViewModel.Product.Image = imageName + extension;
-                productViewModel.Product.Id = 1;
+                productViewModel.Product.Id = db.Product.Count() + 1;
                 db.Product.Add(productViewModel.Product);
             }
             else 

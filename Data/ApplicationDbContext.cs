@@ -4,7 +4,7 @@ using ShopM4.Models;
 
 namespace ShopM4.Data
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
             base(options)
