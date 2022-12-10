@@ -1,9 +1,13 @@
-﻿@{
+﻿@model ShopM4.Models.ViewModels.HomeViewModel
+
+@{
     ViewData["Title"] = "Главная страница";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> 
 
+<div class="container">
+    @foreach (var prod in Model.Products)
+    {
+        <partial name="_ProductCard" model="prod"/>
+    }
+</div>

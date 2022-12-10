@@ -8,7 +8,6 @@ using ShopM4.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopM4.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using AspNetCore;
 
 namespace ShopM4.Controllers
 {
@@ -55,6 +54,12 @@ namespace ShopM4.Controllers
             {
                 Product = new Product(),
                 CategoriesList = db.Category.Select(x =>
+                new SelectListItem()
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                }),
+                MyModelList = db.MyModel.Select(x =>
                 new SelectListItem()
                 {
                     Text = x.Name,
@@ -168,11 +173,24 @@ namespace ShopM4.Controllers
         [HttpPost]
         public IActionResult DeletePost(int? id)
         {
-            var product = db.Product.Find(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Product product = db.Product.Find(id);
+            string root = webHostEnvironment.WebRootPath;
+            string upload = root + PathManager.ImageProductPath;
+
+            var oldFile = upload + product.Image;
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
 
             db.Product.Remove(product);
             db.SaveChanges();
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }

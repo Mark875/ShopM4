@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "CI326+FVX2h24jRkILSATYntaHJHMUJaBgEbinY1F7c=",
+  "Hash": "JjK2xEFvak/NVAnNx2hfRao57p7dWG6hHeTR/KI3VA0=",
   "Source": "ShopM4",
   "BasePath": "_content/ShopM4",
   "Mode": "Default",
@@ -35987,23 +35987,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\Product\\9946fc2f-8d97-4cee-b043-b5b123f68951.txt"
-    },
-    {
-      "Identity": "C:\\Users\\vasil\\source\\repos\\ShopM4\\wwwroot\\Images\\Product\\bc38d970-6b41-4afe-b299-a244d57797ce.png",
-      "SourceId": "ShopM4",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\vasil\\source\\repos\\ShopM4\\wwwroot\\",
-      "BasePath": "_content/ShopM4",
-      "RelativePath": "Images/Product/bc38d970-6b41-4afe-b299-a244d57797ce.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\Images\\Product\\bc38d970-6b41-4afe-b299-a244d57797ce.png"
     },
     {
       "Identity": "C:\\Users\\vasil\\source\\repos\\ShopM4\\wwwroot\\Images\\Product\\c967e7cd-aeda-4366-9073-032a5ed77f46.txt",

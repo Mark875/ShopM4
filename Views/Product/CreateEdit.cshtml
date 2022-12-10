@@ -36,6 +36,12 @@
     </p>
 
     <p>
+        <label asp-for="Product.ShortDescription"></label>
+        <input asp-for="Product.ShortDescription" class="form-control summernote"/>
+        <span asp-validation-for="Product.ShortDescription" class="text-danger"></span>
+    </p>
+
+    <p>
         <label asp-for="Product.Image"></label>
         <input type="file" name="files" id="uploadedImage" class="form-control" multiple />
     </p>
@@ -46,6 +52,13 @@
             <option disabled selected>-- Choose category --</option>
         </select>
         <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+    </p>
+    <p>
+        <label asp-for="Product.MyModelId"></label>
+        <select asp-for="Product.MyModelId" asp-items="@Model.MyModelList" class="form-control">
+            <option disabled selected>-- Choose MyModel --</option>
+        </select>
+        <span asp-validation-for="Product.MyModelId" class="text-danger"></span>
     </p>
 
     <p>
