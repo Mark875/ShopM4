@@ -4,6 +4,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "Summer";
+    //options.IdleTimeout = TimeSpan.FromSeconds(10);
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(
     options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -38,20 +46,28 @@ app.MapControllerRoute(
     return next.Invoke();
 });*/
 
+app.UseSession();
 
-app.Run(x =>
+
+/*app.Run(x =>
 {
     //return x.Response.WriteAsync("Hello " + x.Items["name"]);
-    if (x.Request.Cookies.ContainsKey("name"))
+    if (x.Session.Keys.Contains("name"))
     {
-        return x.Response.WriteAsync("Ok");
+        return x.Response.WriteAsync(x.Session.GetString("name"));
     }
     else
     {
-        x.Response.Cookies.Append("name", "Dany");
+        x.Session.SetString("name", "Vasya");
         return x.Response.WriteAsync("No");
     }
-});
+});*/
 
 app.Run();
 
+/*
+  @foreach (var prod in Model.Products)
+            {
+                <partial name="_ProductCard" model="prod" />
+            }
+ */
