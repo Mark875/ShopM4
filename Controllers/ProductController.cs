@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ShopM4.Data;
 using ShopM4.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using ShopM4.Models.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace ShopM4.Controllers
 {
@@ -27,12 +28,15 @@ namespace ShopM4.Controllers
         {
             IEnumerable<Product> objList = db.Product;
 
+            // получаем ссылки на сущности категорий
             /*
             foreach (var item in objList)
             {
+                // сопоставление таблицы категорий и таблицы product
                 item.Category = db.Category.FirstOrDefault(x => x.Id == item.CategoryId);
             }
             */
+
             return View(objList);
         }
 
@@ -40,32 +44,35 @@ namespace ShopM4.Controllers
         public IActionResult CreateEdit(int? id)
         {
             /*
-            IEnumerable<SelectListItem> CategoriesList = db.Category.Select(x => 
-            new SelectListItem()
-            {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            });
-
+            // получаем лист категорий для отправки его во View
+            IEnumerable<SelectListItem> CategoriesList = db.Category.Select(x =>
+                new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                });
+            // отправляем лист категорий во View
             //ViewBag.CategoriesList = CategoriesList;
-            ViewData["CategoriesList"] = CategoriesList; */
+            ViewData["CategoriesList"] = CategoriesList;
+            */
 
             ProductViewModel productViewModel = new ProductViewModel()
             {
                 Product = new Product(),
                 CategoriesList = db.Category.Select(x =>
-                new SelectListItem()
+                new SelectListItem
                 {
                     Text = x.Name,
                     Value = x.Id.ToString()
                 }),
                 MyModelList = db.MyModel.Select(x =>
-                new SelectListItem()
+                new SelectListItem
                 {
                     Text = x.Name,
                     Value = x.Id.ToString()
                 })
             };
+
             if (id == null)
             {
                 // create product
@@ -75,6 +82,7 @@ namespace ShopM4.Controllers
             {
                 // edit product
                 productViewModel.Product = db.Product.Find(id);
+
                 if (productViewModel.Product == null)
                 {
                     return NotFound();
@@ -83,58 +91,68 @@ namespace ShopM4.Controllers
             }
         }
 
+
         // POST - CreateEdit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateEdit(ProductViewModel productViewModel)
         {
             var files = HttpContext.Request.Form.Files;
-            string root = webHostEnvironment.WebRootPath;
 
-            if (productViewModel.Product.Id == 0) 
+            string wwwRoot = webHostEnvironment.WebRootPath;
+
+            if (productViewModel.Product.Id == 0)
             {
                 // create
-                string upload = root + PathManager.ImageProductPath;
+                string upload = wwwRoot + PathManager.ImageProductPath;
                 string imageName = Guid.NewGuid().ToString();
 
                 string extension = Path.GetExtension(files[0].FileName);
 
-                using (var fileStream = new FileStream(upload + imageName + extension, FileMode.Create))
+                string path = upload + imageName + extension;
+
+                // скопируем файл на сервер
+                using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     files[0].CopyTo(fileStream);
                 }
 
                 productViewModel.Product.Image = imageName + extension;
-                productViewModel.Product.Id = db.Product.Count() + 1;
+
                 db.Product.Add(productViewModel.Product);
             }
-            else 
+            else
             {
                 // update
-                var product = db.Product.AsNoTracking().FirstOrDefault(x => x.Id == productViewModel.Product.Id);
-                if (files.Count > 0)    // new file
+                // AsNoTracking() - IMPORTANT!!!
+                var product = db.Product.AsNoTracking().FirstOrDefault(u => u.Id == productViewModel.Product.Id); // LINQ
+
+                if (files.Count > 0)  // юзер загружает другой файл
                 {
-                    string upload = root + PathManager.ImageProductPath;
+                    string upload = wwwRoot + PathManager.ImageProductPath;
                     string imageName = Guid.NewGuid().ToString();
                     string extension = Path.GetExtension(files[0].FileName);
+                    string path = upload + imageName + extension;
 
                     // delete old file
                     var oldFile = upload + product.Image;
+
                     if (System.IO.File.Exists(oldFile))
                     {
                         System.IO.File.Delete(oldFile);
                     }
 
-                    using (var fileStream = new FileStream(upload + imageName + extension, FileMode.Create))
+                    // скопируем файл на сервер
+                    using (var fileStream = new FileStream(path, FileMode.Create))
                     {
                         files[0].CopyTo(fileStream);
                     }
 
                     productViewModel.Product.Image = imageName + extension;
                 }
-                else
+                else   // фотка не поменялась
                 {
-                    productViewModel.Product.Image = product.Image;
+                    productViewModel.Product.Image = product.Image;  // оставляем имя прежним
                 }
 
                 db.Product.Update(productViewModel.Product);
@@ -143,33 +161,32 @@ namespace ShopM4.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+
+            //return View();
         }
 
-        // GET - Delete
-        [HttpGet]
+
+        // GET - DELETE
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
-                NotFound();
+                return NotFound();
             }
 
             Product product = db.Product.Find(id);
-            
+
             if (product == null)
             {
                 return NotFound();
             }
 
             product.Category = db.Category.Find(product.CategoryId);
-            
 
             return View(product);
         }
 
-
-
-        // POST - Delete
+        // POST
         [HttpPost]
         public IActionResult DeletePost(int? id)
         {
@@ -178,20 +195,25 @@ namespace ShopM4.Controllers
                 return NotFound();
             }
 
+            // delete from db
             Product product = db.Product.Find(id);
-            string root = webHostEnvironment.WebRootPath;
-            string upload = root + PathManager.ImageProductPath;
+            db.Product.Remove(product);
+            db.SaveChanges();
 
+            // delete image from server
+            string upload = webHostEnvironment.WebRootPath + PathManager.ImageProductPath;
+
+            // получаем ссылку на нашу старую фотку
             var oldFile = upload + product.Image;
+
             if (System.IO.File.Exists(oldFile))
             {
                 System.IO.File.Delete(oldFile);
             }
 
-            db.Product.Remove(product);
-            db.SaveChanges();
+
             return RedirectToAction("Index");
         }
+
     }
 }
-

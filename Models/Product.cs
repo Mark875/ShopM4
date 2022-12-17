@@ -19,7 +19,7 @@ namespace ShopM4.Models
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Значение должно быть больше 1 (НЕ НОЛЬ)")]
-        public double Price { get; set; }
+        public float Price { get; set; }
 
         public string Image { get; set; }
 

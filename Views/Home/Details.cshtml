@@ -24,7 +24,16 @@
     </p>
 
     <p>
-        <button type="submit" class="btn btn-primary"> Add to cart </button>
+        if (!Model.IsEmpty)
+        {
+        <a asp-action="RemoveFromCart" asp-route-id="@Model.Product.Id" class="btn btn-warning">
+            Remove from cart
+        </a>
+        }
+        else
+        {
+            <button type="submit" asp-route-id="@Model.Product.Id" asp-action="DetailsPost" class="btn btn-primary"> Add to cart </button>
+        }
         <a class="btn btn-primary" asp-action="Index"> Back </a>
     </p>
 </form>

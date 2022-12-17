@@ -1,9 +1,8 @@
 ﻿@model ShopM4.Models.ViewModels.HomeViewModel
 
 @{
-    ViewData["Title"] = "Главная страница";
+    ViewData["Title"] = "Home page";
 }
-
 
 <div class="container">
 
@@ -11,33 +10,29 @@
         <button class="btn filter-button" data-filter="all">All</button>
         @foreach (var item in Model.Categories)
         {
-            <button class="btn filter-button" data-filter="@item.Name.Replace(' ', '_')">
+            <button class="btn filter-button" data-filter="@item.Name.Replace(' ','_')">
                 @item.Name
             </button>
         }
     </div>
 
     <div>
-        @if (Model != null && Model.Products != null)
+        @foreach (var prod in Model.Products)
         {
-            
+            <partial name="_ProductCard" model="prod" />
         }
     </div>
 </div>
 
-@section Scripts
-{
+@section Scripts {
     <script>
-        $(document).ready(function() { 
-            $('.filter-button').click(function() {
+        $(document).ready(function () {
+            $('.filter-button').click(function () {
                 var value = $(this).attr('data-filter');
-
-                if (value == "all")
-                {
+                if (value == "all") {
                     $('.filter').show('1000');
                 }
-                else
-                {
+                else {
                     $('.filter').not('.' + value).hide('1000');
                     $('.filter').filter('.' + value).show('1000');
                 }
